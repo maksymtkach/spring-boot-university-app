@@ -11,6 +11,7 @@ import java.util.Set;
 @NoArgsConstructor
 @EqualsAndHashCode(exclude = "lectors")
 @Entity
+@Builder
 public class Department {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

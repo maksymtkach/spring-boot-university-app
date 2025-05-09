@@ -1,6 +1,7 @@
 package org.example.simpleuniversity;
 
 import lombok.AllArgsConstructor;
+import org.example.simpleuniversity.config.DataInitializer;
 import org.example.simpleuniversity.model.Degree;
 import org.example.simpleuniversity.model.Department;
 import org.example.simpleuniversity.model.Lector;
