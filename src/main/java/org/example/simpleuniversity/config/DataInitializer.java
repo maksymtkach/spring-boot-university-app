@@ -31,16 +31,16 @@ public class DataInitializer implements CommandLineRunner {
         System.out.println("Running DataInitializer…");
 
         Lector john = Lector.builder()
-                .firstName("John")
-                .lastName("Doe")
+                .firstName("Ivan")
+                .lastName("Petrenko")
                 .salary(5000)
                 .degree(Degree.ASSISTANT)
                 .build();
         john.setDepartments(new HashSet<>());
 
         Lector jane = Lector.builder()
-                .firstName("Jane")
-                .lastName("Smith")
+                .firstName("Petro")
+                .lastName("Ivanov")
                 .salary(4500)
                 .degree(Degree.ASSISTANT)
                 .build();
