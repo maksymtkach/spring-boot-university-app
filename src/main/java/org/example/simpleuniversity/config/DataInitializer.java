@@ -1,5 +1,6 @@
 package org.example.simpleuniversity.config;
 
+import org.springframework.core.annotation.Order;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.AllArgsConstructor;
 import org.example.simpleuniversity.CommandLineApp;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Component;
 import java.util.HashSet;
 import java.util.List;
 
+@Order(1)
 @Component
 @AllArgsConstructor
 public class DataInitializer implements CommandLineRunner {
