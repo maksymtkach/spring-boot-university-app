@@ -22,7 +22,7 @@ A simple Spring Boot console application to manage a university’s departments 
   - [Delete Commands](#delete-commands)
   - [List Commands](#list-commands)
 - [Mocking](#mocking)
-- [Test Cases and Their Purpose](#test-cases-and-their-purpose)
+- [Integration tests](#integration-testing)
 - [Exit](#exit-1)
 
 ## Supported Commands
@@ -281,6 +281,60 @@ Mocking is a unit–testing technique where real dependencies (e.g., repositorie
 | 18  | `whenCreateLectorDeptNotFound_thenThrows`               | `createLector`         | One invalid department key         | Throws `IllegalArgumentException`                               |
 | 19  | `whenUpdateLectorLastName_thenSaves`                    | `updateLector`         | Change `lastname` field            | Lector’s last name updated and `save(...)` invoked              |
 | 20  | `whenDeleteLector_thenRemovesFromDepartmentsAndDeletes` | `deleteLector`         | Remove lector from all departments | Lector removed from each department’s list and `delete` invoked |
+
+---
+
+## Integration Testing
+
+Integration tests exercise the application as a whole—loading the full Spring context, wiring up `@Service` and `@Repository` beans, and using an embedded database (H2) to verify real JPA interactions. This layer of testing ensures that:
+
+* **All beans load correctly** (auto-configuration, component scanning, and profiles).
+* **Repository queries** (derived and custom) work against the actual schema.
+* **Transactions** roll back after each test, so data isolation is maintained.
+* **Database schema generation** (`ddl-auto`) and entity mappings are validated end-to-end.
+
+![Integration tests in Intellij](src/main/resources/integration-testing-success.png)
+
+Below is a table of 20 integration test cases covering each public method in `UniversityService`.
+
+| No. | Test Name                                                  | Method Under Test      | Scenario                                 | Expected Result                                                    |
+| --- | ---------------------------------------------------------- | ---------------------- | ---------------------------------------- | ------------------------------------------------------------------ |
+| 1   | `whenGetHeadOfExists_thenReturnsFullName_IT`               | `getHeadOf`            | Department with a head exists            | Returns the head’s full name                                       |
+| 2   | `whenGetHeadOfNotExists_thenThrows_IT`                     | `getHeadOf`            | Department not found                     | Throws `IllegalArgumentException`                                  |
+| 3   | `whenGetStatistics_thenGroupByDegree_IT`                   | `getStatistics`        | Multiple lectors with various degrees    | Returns a map counting each `Degree`                               |
+| 4   | `whenGetStatisticsEmpty_thenEmptyMap_IT`                   | `getStatistics`        | Department has no lectors                | Returns an empty map                                               |
+| 5   | `whenGetAverageSalary_thenReturnsCorrect_IT`               | `getAverageSalary`     | Two lectors with known salaries          | Returns the correct average salary                                 |
+| 6   | `whenGetAverageSalaryEmpty_thenZero_IT`                    | `getAverageSalary`     | Department has no lectors                | Returns `0.0`                                                      |
+| 7   | `whenGetEmployeeCount_thenReturnsSize_IT`                  | `getEmployeeCount`     | Department with three lectors            | Returns `3`                                                        |
+| 8   | `whenGetEmployeeCountNotFound_thenThrows_IT`               | `getEmployeeCount`     | Department not found                     | Throws `IllegalArgumentException`                                  |
+| 9   | `whenGlobalSearchMatches_thenReturnsNames_IT`              | `globalSearch`         | Lectors matching a name fragment         | Returns comma-separated full names                                 |
+| 10  | `whenGlobalSearchNoMatches_thenEmptyString_IT`             | `globalSearch`         | No matching lectors                      | Returns an empty string                                            |
+| 11  | `whenCreateDepartment_thenSavesWithHead_IT`                | `createDepartment`     | Valid head lector provided               | Persists a new department with the correct head                    |
+| 12  | `whenCreateDepartmentHeadNotFound_thenThrows_IT`           | `createDepartment`     | Nonexistent head ID                      | Throws `IllegalArgumentException`                                  |
+| 13  | `whenUpdateDepartmentHead_thenReassigns_IT`                | `updateDepartmentHead` | Change head from old to new lector       | Department’s `head` is updated and membership lists are adjusted   |
+| 14  | `whenUpdateDepartmentHeadDeptNotFound_thenThrows_IT`       | `updateDepartmentHead` | Department ID not found                  | Throws `IllegalArgumentException`                                  |
+| 15  | `whenDeleteDepartment_thenDeletes_IT`                      | `deleteDepartment`     | Existing department                      | Department is removed from the repository                          |
+| 16  | `whenDeleteDepartmentNotFound_thenThrows_IT`               | `deleteDepartment`     | Department name not found                | Throws `IllegalArgumentException`                                  |
+| 17  | `whenCreateLector_thenAssignsToDepartments_IT`             | `createLector`         | New lector with two valid departments    | Lector is saved and linked to both departments                     |
+| 18  | `whenCreateLectorDeptNotFound_thenThrows_IT`               | `createLector`         | One invalid department ID                | Throws `IllegalArgumentException`                                  |
+| 19  | `whenUpdateLectorLastName_thenSaves_IT`                    | `updateLector`         | Update `lastname` field                  | Lector’s last name is changed and persisted                        |
+| 20  | `whenDeleteLector_thenRemovesFromDepartmentsAndDeletes_IT` | `deleteLector`         | Remove a lector belonging to departments | Lector is deleted and removed from all department membership lists |
+
+Each test method lives in `UniversityServiceIT.java` under `src/test/java/...`, annotated with:
+
+```java
+@SpringBootTest(
+    classes = SimpleUniversityApplication.class,
+    webEnvironment = SpringBootTest.WebEnvironment.NONE
+)
+@ActiveProfiles("test")
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
+@Transactional
+```
+
+This setup guarantees a fresh in-memory database for every test, full Spring Boot auto-configuration, and automatic rollback of any changes.
+
+---
 
 ### Exit
 

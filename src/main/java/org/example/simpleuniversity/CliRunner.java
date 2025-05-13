@@ -1,13 +1,11 @@
+// src/main/java/org/example/simpleuniversity/CliRunner.java
 package org.example.simpleuniversity;
 
-import lombok.AllArgsConstructor;
 import org.example.simpleuniversity.model.Degree;
 import org.example.simpleuniversity.model.Department;
 import org.example.simpleuniversity.model.Lector;
 import org.example.simpleuniversity.service.UniversityService;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
@@ -18,13 +16,12 @@ import java.util.Scanner;
 
 @Component
 @Profile("!test")
-@AllArgsConstructor
-//@SpringBootApplication
-public class CommandLineApp implements CommandLineRunner {
+public class CliRunner implements CommandLineRunner {
+
     private final UniversityService service;
 
-    public static void main(String[] args) {
-        SpringApplication.run(CommandLineApp.class, args);
+    public CliRunner(UniversityService service) {
+        this.service = service;
     }
 
     @Override

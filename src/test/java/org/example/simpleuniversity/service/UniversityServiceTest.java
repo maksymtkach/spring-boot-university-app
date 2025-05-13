@@ -266,7 +266,7 @@ class UniversityServiceTest {
     void whenUpdateLectorLastName_thenSaves() {
         Lector l = new Lector(); l.setLastName("Old");
         when(lectorRepo.findById(1L)).thenReturn(Optional.of(l));
-        when(lectorRepo.findByNameIgnoreCase("1")).thenReturn(Optional.of(l));
+        when(lectorRepo.findByFirstNameIgnoreCase("1")).thenReturn(Optional.of(l));
 
         svc.updateLector("1", "lastname", "New");
 
@@ -281,7 +281,7 @@ class UniversityServiceTest {
         d.setLectors(new HashSet<>(List.of(l)));
         l.setDepartments(new HashSet<>(List.of(d)));
         when(lectorRepo.findById(3L)).thenReturn(Optional.of(l));
-        when(lectorRepo.findByNameIgnoreCase("3")).thenReturn(Optional.of(l));
+        when(lectorRepo.findByFirstNameIgnoreCase("3")).thenReturn(Optional.of(l));
 
         svc.deleteLector("3");
 

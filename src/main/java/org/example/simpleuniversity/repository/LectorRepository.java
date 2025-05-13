@@ -13,5 +13,5 @@ public interface LectorRepository extends JpaRepository<Lector,Long> {
     List<Lector> findByFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCase(String fn, String ln);
     Optional<Lector> findByFirstNameIgnoreCaseAndLastNameIgnoreCase(String firstName, String lastName);
 
-    Object findByNameIgnoreCase(String number);
+    Object findByFirstNameIgnoreCase(String firstName);
 }
